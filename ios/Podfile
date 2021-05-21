@@ -1,0 +1,43 @@
+require_relative '../node_modules/react-native/scripts/react_native_pods'
+require_relative '../node_modules/@react-native-community/cli-platform-ios/native_modules'
+
+require_relative '../node_modules/react-native-unimodules/cocoapods.rb'
+
+source 'https://github.com/react-native-tvos/react-native-tvos-podspecs.git'
+source 'https://cdn.cocoapods.org/'
+
+target 'TestApp' do
+
+  platform :ios, '12.0'
+
+  use_unimodules!
+  config = use_native_modules!
+
+  use_react_native!(:path => config["reactNativePath"])
+
+  target 'TestAppTests' do
+    inherit! :complete
+    # Pods for testing
+  end
+
+end
+
+target 'TestApp-tvOS' do
+
+  platform :tvos, '12.0'
+
+  use_unimodules!
+  config = use_native_modules!
+
+  use_react_native!(:path => config["reactNativePath"])
+
+  target 'TestApp-tvOSTests' do
+    inherit! :complete
+    # Pods for testing
+  end
+
+end
+
+post_install do |installer|
+  flipper_post_install(installer)
+end
