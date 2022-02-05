@@ -1,0 +1,131 @@
+diff --git a/node_modules/expo-modules-core/ios/AppDelegates/ExpoAppDelegate.swift b/node_modules/expo-modules-core/ios/AppDelegates/ExpoAppDelegate.swift
+index 88c0d99..c378c08 100644
+--- a/node_modules/expo-modules-core/ios/AppDelegates/ExpoAppDelegate.swift
++++ b/node_modules/expo-modules-core/ios/AppDelegates/ExpoAppDelegate.swift
+@@ -179,6 +179,7 @@ open class ExpoAppDelegate: UIResponder, UIApplicationDelegate {
+     }
+   }
+ 
++#if !os(tvOS)
+   open func application(_ application: UIApplication, performActionFor shortcutItem: UIApplicationShortcutItem, completionHandler: @escaping (Bool) -> Void) {
+     let selector = #selector(application(_:performActionFor:completionHandler:))
+     let subs = subscribers.filter { $0.responds(to: selector) }
+@@ -201,6 +202,7 @@ open class ExpoAppDelegate: UIResponder, UIApplicationDelegate {
+       subscriber.application?(application, performActionFor: shortcutItem, completionHandler: handler)
+     }
+   }
++#endif
+     
+   // MARK: - Background Fetch
+ 
+diff --git a/node_modules/expo-modules-core/ios/ExpoModulesCore.podspec b/node_modules/expo-modules-core/ios/ExpoModulesCore.podspec
+index d7c7cb2..ef153a7 100644
+--- a/node_modules/expo-modules-core/ios/ExpoModulesCore.podspec
++++ b/node_modules/expo-modules-core/ios/ExpoModulesCore.podspec
+@@ -10,7 +10,7 @@ Pod::Spec.new do |s|
+   s.license        = package['license']
+   s.author         = package['author']
+   s.homepage       = package['homepage']
+-  s.platform       = :ios, '12.0'
++  s.platforms     = {:ios => '12.0', :tvos => '12.0'}
+   s.swift_version  = '5.4'
+   s.source         = { git: 'https://github.com/expo/expo.git' }
+   s.static_framework = true
+@@ -27,12 +27,12 @@ Pod::Spec.new do |s|
+   s.dependency 'React-Core'
+   s.dependency 'ReactCommon/turbomodule/core'
+ 
+-  if !$ExpoUseSources&.include?(package['name']) && ENV['EXPO_USE_SOURCE'].to_i == 0 && File.exist?("#{s.name}.xcframework") && Gem::Version.new(Pod::VERSION) >= Gem::Version.new('1.10.0')
+-    s.source_files = '**/*.h'
+-    s.vendored_frameworks = "#{s.name}.xcframework"
+-  else
++  # if !$ExpoUseSources&.include?(package['name']) && ENV['EXPO_USE_SOURCE'].to_i == 0 && File.exist?("#{s.name}.xcframework") && Gem::Version.new(Pod::VERSION) >= Gem::Version.new('1.10.0')
++  #   s.source_files = '**/*.h'
++  #   s.vendored_frameworks = "#{s.name}.xcframework"
++  # else
+     s.source_files = '**/*.{h,m,mm,swift}'
+-  end
++  # end
+ 
+   s.exclude_files = 'Tests/'
+   s.private_header_files = ['**/*+Private.h', '**/Swift.h']
+diff --git a/node_modules/expo-modules-core/ios/Interfaces/BarcodeScanner/EXBarcodeScannerInterface.h b/node_modules/expo-modules-core/ios/Interfaces/BarcodeScanner/EXBarcodeScannerInterface.h
+index cdd27c4..f4b1a36 100644
+--- a/node_modules/expo-modules-core/ios/Interfaces/BarcodeScanner/EXBarcodeScannerInterface.h
++++ b/node_modules/expo-modules-core/ios/Interfaces/BarcodeScanner/EXBarcodeScannerInterface.h
+@@ -4,6 +4,7 @@
+ #import <AVFoundation/AVFoundation.h>
+ #import <UIKit/UIKit.h>
+ 
++#if !TARGET_OS_TV
+ @protocol EXBarCodeScannerInterface
+ 
+ - (void)setSession:(AVCaptureSession *)session;
+@@ -19,3 +20,4 @@
+ - (void)stopBarCodeScanning;
+ 
+ @end
++#endif
+diff --git a/node_modules/expo-modules-core/ios/Interfaces/BarcodeScanner/EXBarcodeScannerProviderInterface.h b/node_modules/expo-modules-core/ios/Interfaces/BarcodeScanner/EXBarcodeScannerProviderInterface.h
+index c80182d..eb24241 100644
+--- a/node_modules/expo-modules-core/ios/Interfaces/BarcodeScanner/EXBarcodeScannerProviderInterface.h
++++ b/node_modules/expo-modules-core/ios/Interfaces/BarcodeScanner/EXBarcodeScannerProviderInterface.h
+@@ -2,8 +2,10 @@
+ 
+ #import <ExpoModulesCore/EXBarcodeScannerInterface.h>
+ 
++#if !TARGET_OS_TV
+ @protocol EXBarCodeScannerProviderInterface
+ 
+ - (id<EXBarCodeScannerInterface>)createBarCodeScanner;
+ 
+ @end
++#endif
+diff --git a/node_modules/expo-modules-core/ios/Interfaces/Camera/EXCameraInterface.h b/node_modules/expo-modules-core/ios/Interfaces/Camera/EXCameraInterface.h
+index 3b594f2..53b1430 100644
+--- a/node_modules/expo-modules-core/ios/Interfaces/Camera/EXCameraInterface.h
++++ b/node_modules/expo-modules-core/ios/Interfaces/Camera/EXCameraInterface.h
+@@ -2,9 +2,11 @@
+ 
+ #import <AVKit/AVKit.h>
+ 
++#if !TARGET_OS_TV
+ @protocol EXCameraInterface
+ 
+ @property (nonatomic, strong) dispatch_queue_t sessionQueue;
+ @property (nonatomic, strong) AVCaptureSession *session;
+ 
+ @end
++#endif
+diff --git a/node_modules/expo-modules-core/ios/Interfaces/FaceDetector/EXFaceDetectorManagerInterface.h b/node_modules/expo-modules-core/ios/Interfaces/FaceDetector/EXFaceDetectorManagerInterface.h
+index c60e262..b220e11 100644
+--- a/node_modules/expo-modules-core/ios/Interfaces/FaceDetector/EXFaceDetectorManagerInterface.h
++++ b/node_modules/expo-modules-core/ios/Interfaces/FaceDetector/EXFaceDetectorManagerInterface.h
+@@ -4,6 +4,7 @@
+ #import <AVFoundation/AVFoundation.h>
+ #import <UIKit/UIKit.h>
+ 
++#if !TARGET_OS_TV
+ @protocol EXFaceDetectorManagerInterface
+ 
+ - (void)setSessionQueue:(dispatch_queue_t)sessionQueue;
+@@ -18,3 +19,4 @@
+ - (void)stopFaceDetection;
+ 
+ @end
++#endif
+diff --git a/node_modules/expo-modules-core/ios/Interfaces/FaceDetector/EXFaceDetectorManagerProviderInterface.h b/node_modules/expo-modules-core/ios/Interfaces/FaceDetector/EXFaceDetectorManagerProviderInterface.h
+index ea19653..d711d31 100644
+--- a/node_modules/expo-modules-core/ios/Interfaces/FaceDetector/EXFaceDetectorManagerProviderInterface.h
++++ b/node_modules/expo-modules-core/ios/Interfaces/FaceDetector/EXFaceDetectorManagerProviderInterface.h
+@@ -2,8 +2,10 @@
+ 
+ #import <ExpoModulesCore/EXFaceDetectorManagerInterface.h>
+ 
++#if !TARGET_OS_TV
+ @protocol EXFaceDetectorManagerProviderInterface
+ 
+ - (id<EXFaceDetectorManagerInterface>)createFaceDetectorManager;
+ 
+ @end
++#endif
