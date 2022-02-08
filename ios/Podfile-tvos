@@ -1,4 +1,4 @@
-# BOTH TARGETS
+# TVOS ONLY TARGET
 
 require File.join(File.dirname(`node --print "require.resolve('expo/package.json')"`), "scripts/autolinking")
 require_relative '../node_modules/react-native/scripts/react_native_pods'
@@ -7,25 +7,25 @@ require_relative '../node_modules/@react-native-community/cli-platform-ios/nativ
 source 'https://github.com/react-native-tvos/react-native-tvos-podspecs.git'
 source 'https://cdn.cocoapods.org/'
 
-target 'TestApp' do
+# target 'TestApp' do
 
-  use_expo_modules!
-  platform :ios, '12.0'
+#   use_expo_modules!
+#   platform :ios, '12.0'
 
-  config = use_native_modules!
+#   config = use_native_modules!
 
-  use_react_native!(
-    :path => config[:reactNativePath],
-    # to enable hermes on iOS, change `false` to `true` and then install pods
-    :hermes_enabled => false
-  )
+#   use_react_native!(
+#     :path => config[:reactNativePath],
+#     # to enable hermes on iOS, change `false` to `true` and then install pods
+#     :hermes_enabled => false
+#   )
 
-  target 'TestAppTests' do
-    inherit! :complete
-    # Pods for testing
-  end
+#   target 'TestAppTests' do
+#     inherit! :complete
+#     # Pods for testing
+#   end
   
-end
+# end
 
 target 'TestApp-tvOS' do
 
